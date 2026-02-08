@@ -96,4 +96,34 @@ class Character {
 
     return c;
   }
+  static const int statMin = 1;
+static const int statMax = 10;
+static const int statPointLimit = 45;
+
+int get statPointSum =>
+    stats.values.fold(0, (sum, s) => sum + s.base);
+
+bool canIncStat(StatId id) {
+  final s = stats[id]!;
+  if (s.base >= statMax) return false;
+  if (statPointSum >= statPointLimit) return false;
+  return true;
+}
+
+bool canDecStat(StatId id) {
+  final s = stats[id]!;
+  return s.base > statMin;
+}
+
+bool incStat(StatId id) {
+  if (!canIncStat(id)) return false;
+  stats[id]!.base++;
+  return true;
+}
+
+bool decStat(StatId id) {
+  if (!canDecStat(id)) return false;
+  stats[id]!.base--;
+  return true;
+}
 }

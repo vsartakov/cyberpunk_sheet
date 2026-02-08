@@ -167,20 +167,53 @@ class StatsPage extends StatelessWidget {
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
-          Text(
-            'Humanity: ${computed.humanityCurrent} (loss: ${computed.humanityLossTotal})',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 12),
-          ...items.map((id) {
-            final base = character.stats[id]!.base;
-            final eff = computed.effectiveStats[id]!;
-            final label = statLabel(id);
-            return ListTile(
-              title: Text(label),
-              subtitle: Text('base $base → effective $eff'),
-            );
+children: [
+  Text(
+    'Humanity: ${computed.humanityCurrent} (loss: ${computed.humanityLossTotal})',
+    style: Theme.of(context).textTheme.titleMedium,
+  ),
+  const SizedBox(height: 12),
+
+  Text(
+    'Stat points: ${character.statPointSum} / ${Character.statPointLimit}',
+    style: Theme.of(context).textTheme.titleSmall,
+  ),
+  const SizedBox(height: 8),
+
+  ...items.map((id) {
+    final base = character.stats[id]!.base;
+    final eff = computed.effectiveStats[id]!;
+    final label = statLabel(id);
+return ListTile(
+  title: Text(label),
+  subtitle: Text('base $base → effective $eff'),
+  trailing: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      IconButton(
+        icon: const Icon(Icons.remove),
+        onPressed: character.canDecStat(id)
+            ? () {
+                character.decStat(id);
+                (context.findAncestorStateOfType<_HomeShellState>())!
+                    ._recompute();
+              }
+            : null,
+      ),
+      IconButton(
+        icon: const Icon(Icons.add),
+        onPressed: character.canIncStat(id)
+            ? () {
+                character.incStat(id);
+                (context.findAncestorStateOfType<_HomeShellState>())!
+                    ._recompute();
+              }
+            : null,
+      ),
+    ],
+  ),
+);
+
           }),
           const SizedBox(height: 12),
           Text(
